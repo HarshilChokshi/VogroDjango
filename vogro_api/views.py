@@ -346,7 +346,7 @@ def getAllMatchedTasksBelongingToVolunteerUser(request, user_id):
     for task in matchedTaskList:
         matchedTaskJsonList.append(MatchedTask.convertToJsonDict(task))
 
-    return JsonResponse({"result_list": matchedTaskJsonList})
+    return JsonResponse(matchedTaskJsonList)
 
 
 @csrf_exempt
@@ -363,4 +363,4 @@ def getAllCompletedTasksBelongingToVolunteerUser(request, user_id):
     for task in completedTaskList:
         completedaskJsonList.append(CompletedTask.convertToJsonDict(task))
 
-    return JsonResponse({"result_list": completedaskJsonList})
+    return JsonResponse(completedaskJsonList)
