@@ -280,7 +280,7 @@ def matchedTask(request, task_id):
     task = None
     try:
         task = MatchedTask.objects.get(id=task_id)
-    except Task.DoesNotExist:
+    except MatchedTask.DoesNotExist:
           return HttpResponse(f'MatchedTask with id: {task_id}, does not exist', status=404)
 
     if request.method == 'DELETE':
@@ -306,6 +306,39 @@ def matchedTask(request, task_id):
         return HttpResponse(f'Successfully created CompletedTask object', status=200)
     else:
         return HttpResponse('Only the POST and DELETE verbs can be used on this endpoint.', status=405)
+
+
+@csrf_exempt
+def moveMatchedTaskBackToTask(request, task_id):
+    # Make sure method is POST and the content type is application/json
+    if request.method != 'POST':
+        return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
+    if request.content_type != 'application/json':
+        return HttpResponse('The content-type must be application/json.', status=415)
+
+    # Grab the tasks object from database
+    matchedTask = None
+    try:
+        matchedTask = MatchedTask.objects.get(id=task_id)
+    except MatchedTask.DoesNotExist:
+          return HttpResponse(f'MatchedTask with id: {task_id}, does not exist', status=404)
+
+    # Create the task object and save to database
+    task = Task(
+        task_location = task.task_location,
+        description = task.description,
+        task_type = task.task_type,
+        client_name = task.client_name,
+        client_number = task.client_number,
+        earliest_preferred_time = task.earliest_preferred_time,
+        latest_preferred_time = task.latest_preferred_time,
+    )
+    task.save()
+
+    # Delete the matched task object
+    matchedTask.delete()
+
+    return HttpResponse(f'Successfully moved MatchedTask back to Task.', status=200)
 
 
 @csrf_exempt

@@ -14,7 +14,9 @@ urlpatterns = [
     path('task/get_nearby_tasks', views.getNearByTasks),
     # Matched Task endpoints
     path('matched_task/<int:task_id>', views.matchedTask),
+    path('matched_task/move_back/<int:task_id>', views.moveMatchedTaskBackToTask),
     path('matched_task/volunteer_user/<str:user_id>', views.getAllMatchedTasksBelongingToVolunteerUser),
+
     # Completed Task endpoints
     path('completed_task/volunteer_user/<str:user_id>', views.getAllCompletedTasksBelongingToVolunteerUser),
 ]
