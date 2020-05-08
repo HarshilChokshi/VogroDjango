@@ -1,5 +1,4 @@
 import json
-import operator
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -237,8 +236,7 @@ def getNearByTasks(request):
     # run the query and filter by time
     taskResultSet = Task.objects.filter(earliestTimeFilter | latestTimeFilter)
 
-    # Filter by specified radius
-    taskRadiusFilterResultTupleSet = []
+    tasksNearMeList = []
 
     for task in taskResultSet:
         # Parse out the task location lat and long
@@ -250,24 +248,11 @@ def getNearByTasks(request):
         distance = getMeterDistanceBetweenTwoLocations(volunteer_lat, volunteer_long, task_lat, task_long)
 
         # Filter by radius
-        if  distance <= radius:
-            taskTuple = (task, distance)
-            taskRadiusFilterResultTupleSet.append(taskTuple)
-
-
-    # Sort results by distance
-    taskRadiusFilterResultTupleSet.sort(key=operator.itemgetter(1))
-
-    # convert all objects to json and add distance with each object
-    taskJsonList = []
-    for task in taskRadiusFilterResultTupleSet:
-        task_dict = {}
-        task_dict['post'] = Task.convertToJsonDict(task[0])
-        task_dict['distance'] = task[1]
-        taskJsonList.append(task_dict)
+        if distance <= radius:
+            tasksNearMeList.append(Task.convertToJsonDict(task))
 
     # return json object
-    return JsonResponse({"result_list": taskJsonList})
+    return JsonResponse(tasksNearMeList)
 
 
 @csrf_exempt
