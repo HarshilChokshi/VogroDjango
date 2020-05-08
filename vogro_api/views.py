@@ -316,13 +316,13 @@ def moveMatchedTaskBackToTask(request, task_id):
 
     # Create the task object and save to database
     task = Task(
-        task_location = task.task_location,
-        description = task.description,
-        task_type = task.task_type,
-        client_name = task.client_name,
-        client_number = task.client_number,
-        earliest_preferred_time = task.earliest_preferred_time,
-        latest_preferred_time = task.latest_preferred_time,
+        task_location = matchedTask.task_location,
+        description = matchedTask.description,
+        task_type = matchedTask.task_type,
+        client_name = matchedTask.client_name,
+        client_number = matchedTask.client_number,
+        earliest_preferred_time = matchedTask.earliest_preferred_time,
+        latest_preferred_time = matchedTask.latest_preferred_time,
     )
     task.save()
 
