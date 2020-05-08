@@ -212,8 +212,8 @@ def task(request, task_id):
 
 @csrf_exempt
 def getNearByTasks(request):
-    # Make sure request is GET method and content type is application/json
-    if request.method != 'GET':
+    # Make sure request is POST method and content type is application/json
+    if request.method != 'POST':
         return HttpResponse('Only the GET verb can be used on this endpoint.', status=405)
     if request.content_type != 'application/json':
         return HttpResponse('The content-type must be application/json.', status=415)
