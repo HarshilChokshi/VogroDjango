@@ -258,7 +258,7 @@ def getNearByTasks(request):
             tasksNearMeList.append(Task.convertToJsonDict(task))
 
     # return json object
-    return JsonResponse(tasksNearMeList)
+    return JsonResponse({'task_list': tasksNearMeList});
 
 
 @csrf_exempt
@@ -346,7 +346,7 @@ def getAllMatchedTasksBelongingToVolunteerUser(request, user_id):
     for task in matchedTaskList:
         matchedTaskJsonList.append(MatchedTask.convertToJsonDict(task))
 
-    return JsonResponse(matchedTaskJsonList)
+    return JsonResponse({'task_list': matchedTaskJsonList})
 
 
 @csrf_exempt
@@ -363,4 +363,4 @@ def getAllCompletedTasksBelongingToVolunteerUser(request, user_id):
     for task in completedTaskList:
         completedaskJsonList.append(CompletedTask.convertToJsonDict(task))
 
-    return JsonResponse(completedaskJsonList)
+    return JsonResponse({'task_list': completedaskJsonList})
