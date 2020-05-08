@@ -190,8 +190,8 @@ def task(request, task_id):
 
         # Check if volunteer with id exists in database
         try:
-            Volunteer.objects.get(id=volunteer_id)
-        except Volunteer.DoesNotExist:
+            VolunteerUser.objects.get(id=volunteer_id)
+        except VolunteerUser.DoesNotExist:
             return HttpResponse(f'Volunteer with id: {volunteer_id}, does not exist', status=404)
 
         # Create the MatchedTask object and save to database
