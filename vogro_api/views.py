@@ -188,6 +188,12 @@ def task(request, task_id):
         body_dict = json.loads(request.body)
         volunteer_id = body_dict['volunteer_id']
 
+        # Check if volunteer with id exists in database
+        try:
+            Volunteer.objects.get(id=volunteer_id)
+        except Volunteer.DoesNotExist:
+            return HttpResponse(f'Volunteer with id: {volunteer_id}, does not exist', status=404)
+
         # Create the MatchedTask object and save to database
         matchedTask = MatchedTask(
             volunteer_id_id = volunteer_id,
