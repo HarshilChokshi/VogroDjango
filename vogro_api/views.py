@@ -220,7 +220,7 @@ def task(request, task_id):
 def getNearByTasks(request):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
-        return HttpResponse('Only the GET verb can be used on this endpoint.', status=405)
+        return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
     if request.content_type != 'application/json':
         return HttpResponse('The content-type must be application/json.', status=415)
 
@@ -360,6 +360,43 @@ def getAllMatchedTasksBelongingToVolunteerUser(request, user_id):
         matchedTaskJsonList.append(MatchedTask.convertToJsonDict(task))
 
     return JsonResponse({'task_list': matchedTaskJsonList})
+
+
+@csrf_exempt
+def repostTask(request, task_id):
+    # Make sure request is POST method and content type is application/json
+    if request.method != 'POST':
+        return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
+    if request.content_type != 'application/json':
+        return HttpResponse('The content-type must be application/json.', status=415)
+
+
+    # Grab the unmatched task from database
+    unMatchedTask = None
+    try:
+        unMatchedTask = UnMatchedTask.objects.get(id=task_id)
+    except UnMatchedTask.DoesNotExist:
+          return HttpResponse(f'UnMatchedTask with id: {task_id}, does not exist', status=404)
+
+    # Grab the new datetimes from the request
+    body_dict = json.loads(request.body)
+    newEarliestPreferredTime = datetime.strptime(body_dict['earliest_preferred_time'], dateFormatString)
+    newLatestPreferredTime = datetime.strptime(body_dict['latest_preferred_time'], dateFormatString)
+
+    # Create the task object and save to database and delete the unmatched task
+    task = Task(
+        task_location = unMatchedTask.task_location,
+        description = unMatchedTask.description,
+        task_type = unMatchedTask.task_type,
+        client_name = unMatchedTask.client_name,
+        client_number = unMatchedTask.client_number,
+        earliest_preferred_time = newEarliestPreferredTime,
+        latest_preferred_time = newLatestPreferredTime,
+    )
+    task.save()
+
+    unMatchedTask.delete()
+    return HttpResponse(f'Successfully moved UnMatchedTask to Task.', status=200)
 
 
 @csrf_exempt
