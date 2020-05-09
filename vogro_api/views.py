@@ -407,7 +407,7 @@ def getAllCompletedTasksBelongingToVolunteerUser(request, user_id):
     if request.content_type != 'application/json':
         return HttpResponse('The content-type must be application/json.', status=415)
 
-    completedTaskList = CompletedTask.objects.filter(volunteer_id_id=user_id)
+    completedTaskList = CompletedTask.objects.filter(volunteer_id_id=user_id).order_by('-latest_preferred_time')
 
     completedaskJsonList = []
     for task in completedTaskList:

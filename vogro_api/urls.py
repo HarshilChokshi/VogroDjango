@@ -16,7 +16,8 @@ urlpatterns = [
     path('matched_task/<int:task_id>', views.matchedTask),
     path('matched_task/move_back/<int:task_id>', views.moveMatchedTaskBackToTask),
     path('matched_task/volunteer_user/<str:user_id>', views.getAllMatchedTasksBelongingToVolunteerUser),
-
+    #UnMatched Task endpoints
+    path('unmatched_task/repost_task/<int:task_id>', views.repostTask),
     # Completed Task endpoints
     path('completed_task/volunteer_user/<str:user_id>', views.getAllCompletedTasksBelongingToVolunteerUser),
 ]
