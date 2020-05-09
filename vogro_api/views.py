@@ -242,7 +242,7 @@ def getNearByTasks(request):
     # run the query and filter by time
     taskResultSet = Task.objects.filter(earliestTimeFilter | latestTimeFilter)
 
-    tasksNearMeList = []
+    tasksNearMeTupleSet = Set()
 
     for task in taskResultSet:
         # Parse out the task location lat and long
@@ -255,7 +255,19 @@ def getNearByTasks(request):
 
         # Filter by radius
         if distance <= radius:
-            tasksNearMeList.append(Task.convertToJsonDict(task))
+            taskTuple = (Task.convertToJsonDict(task), distance)
+            tasksNearMeTupleSet.append(taskTuple)
+
+    # Sort the resuts by distance
+    tasksNearMeTupleSet.sort(key=operator.itemgetter(1))
+
+    # Convert the set of tuples to json
+    sortedTasksJsonList = []
+    for task in tasksNearMeTupleSet:
+        task_dict = {}
+        task_dict['task'] = task[0]
+        task_dict['distance'] = task[1]
+        sortedTasksJsonList.append(task_dict)
 
     # return json object
     return JsonResponse({'task_list': tasksNearMeList});
