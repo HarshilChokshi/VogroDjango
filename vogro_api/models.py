@@ -92,6 +92,32 @@ class Task(models.Model):
         }
 
 
+class UnMatchedTask(models.Model):
+    task_location = models.TextField()
+    description = models.CharField(max_length=50)
+    task_type = models.CharField(max_length=30)
+    client_name = models.CharField(max_length=30)
+    client_number = models.CharField(max_length=20)
+    earliest_preferred_time = models.DateTimeField()
+    latest_preferred_time = models.DateTimeField()
+
+    def __str__(self):
+        return self.task_type + ' (' + self.client_name + ')'
+
+    @staticmethod
+    def convertToJsonDict(task):
+        return {
+            "id": task.id,
+            "task_location": json.loads(task.task_location),
+            "description": task.description,
+            "task_type": task.task_type,
+            "client_name": task.client_name,
+            "client_number": task.client_number,
+        	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
+        	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
+        }
+
+
 class MatchedTask(models.Model):
     volunteer_id = models.ForeignKey(VolunteerUser, on_delete=models.CASCADE)
     task_location = models.TextField()
