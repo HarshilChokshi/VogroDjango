@@ -6,6 +6,7 @@ from .constants import *
 from .view_helpers import *
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
+import operator
 
 # Create your views here.
 @csrf_exempt
@@ -242,7 +243,7 @@ def getNearByTasks(request):
     # run the query and filter by time
     taskResultSet = Task.objects.filter(earliestTimeFilter | latestTimeFilter)
 
-    tasksNearMeTupleSet = Set()
+    tasksNearMeTupleSet = []
 
     for task in taskResultSet:
         # Parse out the task location lat and long
@@ -270,7 +271,7 @@ def getNearByTasks(request):
         sortedTasksJsonList.append(task_dict)
 
     # return json object
-    return JsonResponse({'task_list': tasksNearMeList});
+    return JsonResponse({'task_list': sortedTasksJsonList});
 
 
 @csrf_exempt
