@@ -68,7 +68,7 @@ class ClientUser(models.Model):
 
 class Task(models.Model):
     task_location = models.TextField()
-    description = models.CharField(max_length=50)
+    description = models.TextField()
     task_type = models.CharField(max_length=30)
     client_name = models.CharField(max_length=30)
     client_number = models.CharField(max_length=20)
@@ -94,7 +94,7 @@ class Task(models.Model):
 
 class UnMatchedTask(models.Model):
     task_location = models.TextField()
-    description = models.CharField(max_length=50)
+    description = models.TextField()
     task_type = models.CharField(max_length=30)
     client_name = models.CharField(max_length=30)
     client_number = models.CharField(max_length=20)
@@ -121,7 +121,7 @@ class UnMatchedTask(models.Model):
 class MatchedTask(models.Model):
     volunteer_id = models.ForeignKey(VolunteerUser, on_delete=models.CASCADE)
     task_location = models.TextField()
-    description = models.CharField(max_length=50)
+    description = models.TextField()
     task_type = models.CharField(max_length=30)
     client_name = models.CharField(max_length=30)
     client_number = models.CharField(max_length=20)
@@ -148,7 +148,7 @@ class MatchedTask(models.Model):
 class CompletedTask(models.Model):
     volunteer_id = models.ForeignKey(VolunteerUser, on_delete=models.CASCADE)
     task_location = models.TextField()
-    description = models.CharField(max_length=50)
+    description = models.TextField()
     task_type = models.CharField(max_length=30)
     client_name = models.CharField(max_length=30)
     client_number = models.CharField(max_length=20)
