@@ -125,5 +125,5 @@ STATIC_URL = '/static/'
 
 
 CRONJOBS = [
-    ('59 23 * * *', 'vogro_api.cron.moveAllExpiredTasksToUnMatchedTaskTable')
+    ('00 04 * * *', 'vogro_api.cron.moveAllExpiredTasksToUnMatchedTaskTable')
 ]
