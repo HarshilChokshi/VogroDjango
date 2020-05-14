@@ -41,4 +41,8 @@ python3 manage.py migrate
 python3 manage.py loaddata /tmp/datadump.json
 gunicorn --daemon --bind unix:/home/ubuntu/VogroDjango/VogroDjango.sock VogroDjango.wsgi > /tmp/django-output.log
 sudo service nginx restart
+
+# Setup Cron jobs
 python3 manage.py crontab add
+sudo chmod +x ~/VogroDjango/configuration/back_up_db.sh
+crontab -e # Add job 00 23 * * * ~/VogroDjango/configuration/back_up_db.sh
