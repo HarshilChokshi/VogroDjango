@@ -20,7 +20,7 @@ class VolunteerUser(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
     full_name = models.CharField(max_length=30)
     email = models.CharField(max_length=30)
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=25)
     persona_id = models.CharField(max_length=40)
     persona_government_id_url = models.CharField(max_length=40)
     is_verified  = models.BooleanField(default=False)
