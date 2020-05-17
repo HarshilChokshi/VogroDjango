@@ -18,33 +18,39 @@ class Location(object):
 # Create your models here.
 class VolunteerUser(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
-    full_name = models.CharField(max_length=30)
-    email = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=20)
+    email = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=25)
+    city = models.CharField(max_length=50)
     persona_id = models.CharField(max_length=40)
     persona_government_id_url = models.CharField(max_length=40)
     is_verified  = models.BooleanField(default=False)
+    has_used_app = models.BooleanField(default=False)
 
 
     def __str__(self):
-        return self.full_name
+        return self.first_name + ' ' + self.last_name
 
     @staticmethod
     def convertToJsonDict(volunteerUser):
         return {
             'id': volunteerUser.id,
-            'full_name': volunteerUser.full_name,
+            'first_name': volunteerUser.first_name,
+            'last_name': volunteerUser.last_name,
             'email': volunteerUser.email,
             'phone_number': volunteerUser.phone_number,
+            'city': volunteerUser.city,
             'persona_id': volunteerUser.persona_id,
             'persona_government_id_url': volunteerUser.persona_government_id_url,
             'is_verified': volunteerUser.is_verified,
+            'has_used_app': volunteerUser.has_used_app,
         }
 
 
 class ClientUser(models.Model):
     full_name = models.CharField(max_length=30)
-    email = models.CharField(max_length=30)
+    email = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=15)
     address = models.TextField()
     address_name = models.CharField(max_length=100)
@@ -71,9 +77,12 @@ class Task(models.Model):
     description = models.TextField()
     task_type = models.CharField(max_length=30)
     client_name = models.CharField(max_length=30)
+    client_email = models.CharField(max_length=50)
     client_number = models.CharField(max_length=20)
     earliest_preferred_time = models.DateTimeField()
     latest_preferred_time = models.DateTimeField()
+    city = models.CharField(max_length=50)
+    estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
         return self.task_type + ' (' + self.client_name + ')'
@@ -86,9 +95,12 @@ class Task(models.Model):
             "description": task.description,
             "task_type": task.task_type,
             "client_name": task.client_name,
+            "client_email": task.client,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
+            "city": task.city,
+            "estimated_time": task.estimated_time,
         }
 
 
@@ -97,9 +109,12 @@ class UnMatchedTask(models.Model):
     description = models.TextField()
     task_type = models.CharField(max_length=30)
     client_name = models.CharField(max_length=30)
+    client_email = models.CharField(max_length=50)
     client_number = models.CharField(max_length=20)
     earliest_preferred_time = models.DateTimeField()
     latest_preferred_time = models.DateTimeField()
+    city = models.CharField(max_length=50)
+    estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
         return self.task_type + ' (' + self.client_name + ')'
@@ -112,9 +127,12 @@ class UnMatchedTask(models.Model):
             "description": task.description,
             "task_type": task.task_type,
             "client_name": task.client_name,
+            "client_email": task.client,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
+            "city": task.city,
+            "estimated_time": task.estimated_time,
         }
 
 
@@ -124,9 +142,12 @@ class MatchedTask(models.Model):
     description = models.TextField()
     task_type = models.CharField(max_length=30)
     client_name = models.CharField(max_length=30)
+    client_email = models.CharField(max_length=50)
     client_number = models.CharField(max_length=20)
     earliest_preferred_time = models.DateTimeField()
     latest_preferred_time = models.DateTimeField()
+    city = models.CharField(max_length=50)
+    estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
         return self.task_type + ' (' + self.client_name + ')'
@@ -140,9 +161,12 @@ class MatchedTask(models.Model):
             "description": task.description,
             "task_type": task.task_type,
             "client_name": task.client_name,
+            "client_email": task.client,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
+            "city": task.city,
+            "estimated_time": task.estimated_time,
         }
 
 class CompletedTask(models.Model):
@@ -151,9 +175,12 @@ class CompletedTask(models.Model):
     description = models.TextField()
     task_type = models.CharField(max_length=30)
     client_name = models.CharField(max_length=30)
+    client_email = models.CharField(max_length=50)
     client_number = models.CharField(max_length=20)
     earliest_preferred_time = models.DateTimeField()
     latest_preferred_time = models.DateTimeField()
+    city = models.CharField(max_length=50)
+    estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
         return self.task_type + ' (' + self.client_name + ')'
@@ -167,7 +194,10 @@ class CompletedTask(models.Model):
             "description": task.description,
             "task_type": task.task_type,
             "client_name": task.client_name,
+            "client_email": task.client,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
+            "city": task.city,
+            "estimated_time": task.estimated_time,
         }

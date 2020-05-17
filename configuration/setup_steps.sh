@@ -30,7 +30,6 @@ sudo ln -s /etc/nginx/sites-available/djtrump /etc/nginx/sites-enabled
 #Command to check if setup is good so far
 sudo nginx -t
 
-
 # Copy over code, start db, and django server
 scp -r ~/VogroDjango/ ubuntu@ec2-13-59-38-83.us-east-2.compute.amazonaws.com:/home/ubuntu
 sudo touch /etc/mysql/my.cnf
@@ -39,7 +38,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart mysql
 python3 manage.py migrate
 python3 manage.py loaddata /tmp/datadump.json
-gunicorn --daemon --bind unix:/home/ubuntu/VogroDjango/VogroDjango.sock VogroDjango.wsgi > /tmp/django-output.log
+gunicorn --daemon --bind unix:/home/ubuntu/VogroDjango/VogroDjango.sock VogroDjango.wsgi
 sudo service nginx restart
 
 # Setup Cron jobs
