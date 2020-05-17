@@ -23,12 +23,14 @@ def addVolunteerUser(request):
     # Create the VolunteerUser object and save it to database
     volunteerUser = VolunteerUser(
         id = body_dict['id'],
-        full_name = body_dict['full_name'],
+        first_name = body_dict['first_name'],
+        last_name = body_dict['last_name'],
         email = body_dict['email'],
         phone_number = body_dict['phone_number'],
         persona_id = body_dict['persona_id'],
         persona_government_id_url = body_dict['persona_government_id_url'],
         is_verified = body_dict['is_verified'],
+        has_used_app = body_dict['has_used_app']
     )
 
     # Save the user to the database and return response.
@@ -160,9 +162,12 @@ def createTask(request):
         description = body_dict['description'],
         task_type = body_dict['task_type'],
         client_name = body_dict['client_name'],
+        client_email = body_dict['client_email'],
         client_number = body_dict['client_number'],
         earliest_preferred_time = earliest_preferred_time,
         latest_preferred_time = latest_preferred_time,
+        city = body_dict['city'],
+        estimated_time = body_dict['estimated_time'],
     )
     task.save()
     return HttpResponse('Successfully added Task object', status=200)
@@ -202,9 +207,12 @@ def task(request, task_id):
             description = task.description,
             task_type = task.task_type,
             client_name = task.client_name,
+            client_email = task.client_email,
             client_number = task.client_number,
             earliest_preferred_time = task.earliest_preferred_time,
             latest_preferred_time = task.latest_preferred_time,
+            city = task.city,
+            estimated_time = task.estimated_time,
         )
         matchedTask.save()
 
@@ -298,9 +306,12 @@ def matchedTask(request, task_id):
             description = task.description,
             task_type = task.task_type,
             client_name = task.client_name,
+            client_email = task.client_email,
             client_number = task.client_number,
             earliest_preferred_time = task.earliest_preferred_time,
             latest_preferred_time = task.latest_preferred_time,
+            city = task.city,
+            estimated_time = task.estimated_time,
         )
         completedTask.save()
 
@@ -333,9 +344,12 @@ def moveMatchedTaskBackToTask(request, task_id):
         description = matchedTask.description,
         task_type = matchedTask.task_type,
         client_name = matchedTask.client_name,
+        client_email = matchedTask.client_email,
         client_number = matchedTask.client_number,
         earliest_preferred_time = matchedTask.earliest_preferred_time,
         latest_preferred_time = matchedTask.latest_preferred_time,
+        city = matchedTask.city,
+        estimated_time = matchedTask.estimated_time,
     )
     task.save()
 
@@ -389,9 +403,12 @@ def repostTask(request, task_id):
         description = unMatchedTask.description,
         task_type = unMatchedTask.task_type,
         client_name = unMatchedTask.client_name,
+        client_email = unMatchedTask.client_email,
         client_number = unMatchedTask.client_number,
         earliest_preferred_time = newEarliestPreferredTime,
         latest_preferred_time = newLatestPreferredTime,
+        city = unMatchedTask.city,
+        estimated_time = unMatchedTask.estimated_time,
     )
     task.save()
 
