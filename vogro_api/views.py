@@ -8,9 +8,79 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 import operator
 
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+from rest_framework import serializers
+from rest_framework import status
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id','username', 'email', 'first_name', 'last_name', 'password')
+
+    def create(self, validated_data):
+        user = super(UserSerializer, self).create(validated_data)
+        # user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def auth_test(request, format=None):
+    content = {
+        'user': "LOL",  # `django.contrib.auth.User` instance.
+        'auth': "ROFL",  # None
+        'lol': 'HAHAHAHa so funny'
+    }
+    return Response(content)
+
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def refresh_token(request):
+    # Transforming data for User table
+    data = request.data
+    data['username'] = data['id']
+
+    serialized = UserSerializer(data=data)
+    refresh_user = User.objects.get(username=data['id'])
+    token, created =  Token.objects.get_or_create(user=refresh_user)
+    if created: #A user needs to be created first
+        return HttpResponse('Create a user first', status=status.HTTP_400_BAD_REQUEST)
+    token.delete()
+    token = Token.objects.create(user=refresh_user)
+    token.save()   
+    response = {}
+    response['Authorization'] = f'Token {token.key}'
+    return Response(response, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def create_user(request):
+    # Transforming data for User table
+    data = request.data
+    data['username'] = data['id']
+
+    serialized = UserSerializer(data=data)
+    if serialized.is_valid():
+        serialized.save()
+        return Response(serialized.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+
 # Create your views here.
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes((AllowAny,))
 def addVolunteerUser(request):
+    import pdb; pdb.set_trace()
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
         return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
@@ -19,6 +89,10 @@ def addVolunteerUser(request):
 
     # get the request body and convert it to python dict object
     body_dict = json.loads(request.body)
+    
+    #Creates user used for token authentication
+    create_user(request)
+    token = Token.objects.create(user=User.objects.get(username=body_dict['id']))
 
     # Create the VolunteerUser object and save it to database
     volunteerUser = VolunteerUser(
@@ -35,11 +109,15 @@ def addVolunteerUser(request):
 
     # Save the user to the database and return response.
     volunteerUser.save()
-    return HttpResponse('Successfully added VolunteerUser object', status=200)
+    response = HttpResponse('Successfully added VolunteerUser object', status=200)
+    response['Authorization'] = f'Token {token.key}'
+    return response
 
 
 
-@csrf_exempt
+@api_view(['GET', 'PATCH'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def volunteerUser(request, user_id):
     # Make sure content type is application/json
     if request.content_type != 'application/json':
@@ -72,8 +150,9 @@ def volunteerUser(request, user_id):
         return HttpResponse('Only the GET and PATCH verbs can be used on this endpoint.', status=405)
 
 
-
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def addClientUser(request):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
@@ -103,7 +182,9 @@ def addClientUser(request):
 
 
 
-@csrf_exempt
+@api_view(['GET', 'PATCH'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def clientUser(request, user_id):
     # Make sure content type is application/json
     if request.content_type != 'application/json':
@@ -138,7 +219,9 @@ def clientUser(request, user_id):
     else:
         return HttpResponse('Only the GET and PATCH verbs can be used on this endpoint.', status=405)
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def createTask(request):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
@@ -173,7 +256,9 @@ def createTask(request):
     return HttpResponse('Successfully added Task object', status=200)
 
 
-@csrf_exempt
+@api_view(['POST', 'DELETE'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def task(request, task_id):
     # Make sure the content type is application/json
     if request.content_type != 'application/json':
@@ -224,7 +309,9 @@ def task(request, task_id):
         return HttpResponse('Only the POST and DELETE verbs can be used on this endpoint.', status=405)
 
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def getNearByTasks(request):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
@@ -282,7 +369,9 @@ def getNearByTasks(request):
     return JsonResponse({'task_list': sortedTasksJsonList});
 
 
-@csrf_exempt
+@api_view(['POST', 'DELETE'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def matchedTask(request, task_id):
     # Make sure the content type is application/json
     if request.content_type != 'application/json':
@@ -322,8 +411,9 @@ def matchedTask(request, task_id):
     else:
         return HttpResponse('Only the POST and DELETE verbs can be used on this endpoint.', status=405)
 
-
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def moveMatchedTaskBackToTask(request, task_id):
     # Make sure method is POST and the content type is application/json
     if request.method != 'POST':
@@ -359,7 +449,9 @@ def moveMatchedTaskBackToTask(request, task_id):
     return HttpResponse(f'Successfully moved MatchedTask back to Task.', status=200)
 
 
-@csrf_exempt
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def getAllMatchedTasksBelongingToVolunteerUser(request, user_id):
     # Make sure request is GET method and content type is application/json
     if request.method != 'GET':
@@ -376,7 +468,9 @@ def getAllMatchedTasksBelongingToVolunteerUser(request, user_id):
     return JsonResponse({'task_list': matchedTaskJsonList})
 
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def repostTask(request, task_id):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
@@ -416,7 +510,9 @@ def repostTask(request, task_id):
     return HttpResponse(f'Successfully moved UnMatchedTask to Task.', status=200)
 
 
-@csrf_exempt
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def getAllCompletedTasksBelongingToVolunteerUser(request, user_id):
     # Make sure request is GET method and content type is application/json
     if request.method != 'GET':

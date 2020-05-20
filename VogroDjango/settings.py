@@ -32,6 +32,9 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'vogro_api.apps.VogroApiConfig',
+    'rest_framework',
+    'rest_framework.authentication',
+    'rest_framework.authtoken',
     'django.contrib.admin',
     'django_crontab',
     'django.contrib.auth',
@@ -127,3 +130,19 @@ STATIC_URL = '/static/'
 CRONJOBS = [
     ('00 04 * * *', 'vogro_api.cron.moveAllExpiredTasksToUnMatchedTaskTable')
 ]
+
+LOGIN_URL = "auth::login"
+LOGIN_REDIRECT_URL = "site_root"
+LOGOUT_REDIRECT_URL = "auth:login"
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    )
+}

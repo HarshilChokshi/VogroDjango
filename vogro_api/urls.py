@@ -2,6 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    #Just a test function
+    path('auth_test', views.auth_test),
+    path('refresh_token', views.refresh_token),
     # Volunteer user endpoints
     path('volunteer_user/add_user', views.addVolunteerUser),
     path('volunteer_user/<str:user_id>', views.volunteerUser),
