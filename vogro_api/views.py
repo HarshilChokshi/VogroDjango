@@ -42,7 +42,8 @@ def auth_test(request, format=None):
     return Response(content)
 
 @api_view(['POST'])
-@permission_classes((AllowAny,))
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def refresh_token(request):
     # Transforming data for User table
     data = request.data
