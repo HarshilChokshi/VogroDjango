@@ -36,9 +36,8 @@ class UserSerializer(serializers.ModelSerializer):
 @permission_classes([IsAuthenticated])
 def auth_test(request, format=None):
     content = {
-        'user': "LOL",  # `django.contrib.auth.User` instance.
-        'auth': "ROFL",  # None
-        'lol': 'HAHAHAHa so funny'
+        'user': "test_user",  # `django.contrib.auth.User` instance.
+        'auth': "test_auth",  # None
     }
     return Response(content)
 
@@ -56,7 +55,7 @@ def refresh_token(request):
         return HttpResponse('Create a user first', status=status.HTTP_400_BAD_REQUEST)
     token.delete()
     token = Token.objects.create(user=refresh_user)
-    token.save()   
+    token.save()
     response = {}
     response['Authorization'] = f'Token {token.key}'
     return Response(response, status=status.HTTP_201_CREATED)
@@ -89,7 +88,7 @@ def addVolunteerUser(request):
 
     # get the request body and convert it to python dict object
     body_dict = json.loads(request.body)
-    
+
     #Creates user used for token authentication
     create_user(request)
     token = Token.objects.create(user=User.objects.get(username=body_dict['id']))
@@ -101,10 +100,9 @@ def addVolunteerUser(request):
         last_name = body_dict['last_name'],
         email = body_dict['email'],
         phone_number = body_dict['phone_number'],
-        persona_id = body_dict['persona_id'],
-        persona_government_id_url = body_dict['persona_government_id_url'],
         is_verified = body_dict['is_verified'],
-        has_used_app = body_dict['has_used_app']
+        has_used_app = body_dict['has_used_app'],
+        city_city_name = body_dict['city'],
     )
 
     # Save the user to the database and return response.
@@ -143,7 +141,10 @@ def volunteerUser(request, user_id):
                 getattr(volunteerUser, field_name)
             except AttributeError:
                 continue
-            setattr(volunteerUser, field_name, field_new_value)
+            if field_name == 'city':
+                volunteerUser.city.city_name = field_new_value
+            else:
+                setattr(volunteerUser, field_name, field_new_value)
         volunteerUser.save()
         return HttpResponse('Successfully updated VolunteerUser object', status=200)
     else:
@@ -243,13 +244,13 @@ def createTask(request):
     task = Task(
         task_location = task_location_string,
         description = body_dict['description'],
-        task_type = body_dict['task_type'],
+        task_type_task_type = body_dict['task_type'],
         client_name = body_dict['client_name'],
         client_email = body_dict['client_email'],
         client_number = body_dict['client_number'],
         earliest_preferred_time = earliest_preferred_time,
         latest_preferred_time = latest_preferred_time,
-        city = body_dict['city'],
+        city_city_name = body_dict['city'],
         estimated_time = body_dict['estimated_time'],
     )
     task.save()
@@ -290,7 +291,7 @@ def task(request, task_id):
             volunteer_id_id = volunteer_id,
             task_location = task.task_location,
             description = task.description,
-            task_type = task.task_type,
+            task_type_task_type = task.task_type.task_type,
             client_name = task.client_name,
             client_email = task.client_email,
             client_number = task.client_number,
@@ -527,3 +528,24 @@ def getAllCompletedTasksBelongingToVolunteerUser(request, user_id):
         completedaskJsonList.append(CompletedTask.convertToJsonDict(task))
 
     return JsonResponse({'task_list': completedaskJsonList})
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def getAllCities(request):
+    # Make sure request is GET method and content type is application/json
+    if request.method != 'GET':
+        return HttpResponse('Only the GET verb can be used on this endpoint.', status=405)
+    if request.content_type != 'application/json':
+        return HttpResponse('The content-type must be application/json.', status=415)
+
+    # Grab all the cities
+    cities = City.objects.all()
+    city_list = []
+
+    # Parse out the city name string from each one
+    for city in cities:
+        city_list.append(city.city_name)
+
+    # Return json object
+    return JsonResponse({'cities': city_list})

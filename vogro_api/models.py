@@ -16,15 +16,21 @@ class Location(object):
 
 
 # Create your models here.
+class City(models.Model):
+    city_name = models.CharField(max_length=50, primary_key=True)
+
+
+class TaskType(models.Model):
+    task_type = models.CharField(max_length=30, primary_key=True)
+
+
 class VolunteerUser(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     email = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=25)
-    city = models.CharField(max_length=50)
-    persona_id = models.CharField(max_length=40)
-    persona_government_id_url = models.CharField(max_length=40)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
     is_verified  = models.BooleanField(default=False)
     has_used_app = models.BooleanField(default=False)
 
@@ -40,9 +46,7 @@ class VolunteerUser(models.Model):
             'last_name': volunteerUser.last_name,
             'email': volunteerUser.email,
             'phone_number': volunteerUser.phone_number,
-            'city': volunteerUser.city,
-            'persona_id': volunteerUser.persona_id,
-            'persona_government_id_url': volunteerUser.persona_government_id_url,
+            'city': volunteerUser.city.city_name,
             'is_verified': volunteerUser.is_verified,
             'has_used_app': volunteerUser.has_used_app,
         }
@@ -75,13 +79,13 @@ class ClientUser(models.Model):
 class Task(models.Model):
     task_location = models.TextField()
     description = models.TextField()
-    task_type = models.CharField(max_length=30)
+    task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     client_name = models.CharField(max_length=30)
     client_email = models.CharField(max_length=50)
     client_number = models.CharField(max_length=20)
     earliest_preferred_time = models.DateTimeField()
     latest_preferred_time = models.DateTimeField()
-    city = models.CharField(max_length=50)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
     estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
@@ -93,13 +97,13 @@ class Task(models.Model):
             "id": task.id,
             "task_location": json.loads(task.task_location),
             "description": task.description,
-            "task_type": task.task_type,
+            "task_type": task.task_type.task_type,
             "client_name": task.client_name,
             "client_email": task.client,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
-            "city": task.city,
+            "city": task.city.city,
             "estimated_time": task.estimated_time,
         }
 
@@ -107,13 +111,13 @@ class Task(models.Model):
 class UnMatchedTask(models.Model):
     task_location = models.TextField()
     description = models.TextField()
-    task_type = models.CharField(max_length=30)
+    task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     client_name = models.CharField(max_length=30)
     client_email = models.CharField(max_length=50)
     client_number = models.CharField(max_length=20)
     earliest_preferred_time = models.DateTimeField()
     latest_preferred_time = models.DateTimeField()
-    city = models.CharField(max_length=50)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
     estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
@@ -125,13 +129,13 @@ class UnMatchedTask(models.Model):
             "id": task.id,
             "task_location": json.loads(task.task_location),
             "description": task.description,
-            "task_type": task.task_type,
+            "task_type": task.task_type.task_type,
             "client_name": task.client_name,
             "client_email": task.client,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
-            "city": task.city,
+            "city": task.city.city,
             "estimated_time": task.estimated_time,
         }
 
@@ -140,13 +144,13 @@ class MatchedTask(models.Model):
     volunteer_id = models.ForeignKey(VolunteerUser, on_delete=models.CASCADE)
     task_location = models.TextField()
     description = models.TextField()
-    task_type = models.CharField(max_length=30)
+    task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     client_name = models.CharField(max_length=30)
     client_email = models.CharField(max_length=50)
     client_number = models.CharField(max_length=20)
     earliest_preferred_time = models.DateTimeField()
     latest_preferred_time = models.DateTimeField()
-    city = models.CharField(max_length=50)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
     estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
@@ -159,13 +163,13 @@ class MatchedTask(models.Model):
             "volunteer_id": task.volunteer_id.id,
             "task_location": json.loads(task.task_location),
             "description": task.description,
-            "task_type": task.task_type,
+            "task_type": task.task_type.task_type,
             "client_name": task.client_name,
             "client_email": task.client,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
-            "city": task.city,
+            "city": task.city.city,
             "estimated_time": task.estimated_time,
         }
 
@@ -173,13 +177,13 @@ class CompletedTask(models.Model):
     volunteer_id = models.ForeignKey(VolunteerUser, on_delete=models.CASCADE)
     task_location = models.TextField()
     description = models.TextField()
-    task_type = models.CharField(max_length=30)
+    task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     client_name = models.CharField(max_length=30)
     client_email = models.CharField(max_length=50)
     client_number = models.CharField(max_length=20)
     earliest_preferred_time = models.DateTimeField()
     latest_preferred_time = models.DateTimeField()
-    city = models.CharField(max_length=50)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
     estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
@@ -192,12 +196,12 @@ class CompletedTask(models.Model):
             "volunteer_id": task.volunteer_id.id,
             "task_location": json.loads(task.task_location),
             "description": task.description,
-            "task_type": task.task_type,
+            "task_type": task.task_type.task_type,
             "client_name": task.client_name,
             "client_email": task.client,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
-            "city": task.city,
+            "city": task.city.city,
             "estimated_time": task.estimated_time,
         }
