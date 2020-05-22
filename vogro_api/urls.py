@@ -23,4 +23,6 @@ urlpatterns = [
     path('unmatched_task/repost_task/<int:task_id>', views.repostTask),
     # Completed Task endpoints
     path('completed_task/volunteer_user/<str:user_id>', views.getAllCompletedTasksBelongingToVolunteerUser),
+    # City endpoints
+    path('city/get_all_cities', views.getAllCities),
 ]

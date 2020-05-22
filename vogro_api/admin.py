@@ -14,8 +14,10 @@ class TaskByCityFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         lookUpsList = []
 
-        for city in ontarioCitiesList:
-            cityTuple = (city, city)
+
+        cityList = City.objects.all()
+        for city in cityList:
+            cityTuple = (city.city_name, city.city_name)
             lookUpsList.append(cityTuple)
 
         return lookUpsList
@@ -37,8 +39,9 @@ class VolunteerUserByCityFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         lookUpsList = []
 
-        for city in ontarioCitiesList:
-            cityTuple = (city, city)
+        cityList = City.objects.all()
+        for city in cityList:
+            cityTuple = (city.city_name, city.city_name)
             lookUpsList.append(cityTuple)
 
         return lookUpsList
@@ -132,3 +135,15 @@ class UnMatchedTaskAdmin(admin.ModelAdmin):
 @admin.register(CompletedTask)
 class CompletedTaskAdmin(admin.ModelAdmin):
     list_filter = (TaskByCityFilter,)
+
+@admin.register(City)
+class CityAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        for cityName in ontarioCitiesList:
+            city = City(cityName)
+            city.save()
+        super().save_model(request, obj, form, change)
+
+@admin.register(TaskType)
+class TaskTypeAdmin(admin.ModelAdmin):
+    pass
