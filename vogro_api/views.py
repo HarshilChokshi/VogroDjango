@@ -19,11 +19,11 @@ from rest_framework import serializers
 from rest_framework import status
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    #password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ('id','username', 'email', 'first_name', 'last_name', 'password')
+        fields = ('id','username', 'email', 'first_name', 'last_name')
 
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
@@ -76,10 +76,10 @@ def create_user(request):
         return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Create your views here.
-@api_view(['POST'])
-@permission_classes((AllowAny,))
+# @api_view(['POST'])
+# @permission_classes((AllowAny,))
+@csrf_exempt
 def addVolunteerUser(request):
-    import pdb; pdb.set_trace()
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
         return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
@@ -102,14 +102,14 @@ def addVolunteerUser(request):
         phone_number = body_dict['phone_number'],
         is_verified = body_dict['is_verified'],
         has_used_app = body_dict['has_used_app'],
-        city_city_name = body_dict['city'],
+        city_id = body_dict['city'],
     )
 
     # Save the user to the database and return response.
     volunteerUser.save()
-    response = HttpResponse('Successfully added VolunteerUser object', status=200)
+    response = {}
     response['Authorization'] = f'Token {token.key}'
-    return response
+    return JsonResponse(response, status=200)
 
 
 
@@ -244,13 +244,13 @@ def createTask(request):
     task = Task(
         task_location = task_location_string,
         description = body_dict['description'],
-        task_type_task_type = body_dict['task_type'],
+        task_type_id = body_dict['task_type'],
         client_name = body_dict['client_name'],
         client_email = body_dict['client_email'],
         client_number = body_dict['client_number'],
         earliest_preferred_time = earliest_preferred_time,
         latest_preferred_time = latest_preferred_time,
-        city_city_name = body_dict['city'],
+        city_id = body_dict['city'],
         estimated_time = body_dict['estimated_time'],
     )
     task.save()
@@ -291,7 +291,7 @@ def task(request, task_id):
             volunteer_id_id = volunteer_id,
             task_location = task.task_location,
             description = task.description,
-            task_type_task_type = task.task_type.task_type,
+            task_type = task.task_type.task_type,
             client_name = task.client_name,
             client_email = task.client_email,
             client_number = task.client_number,
