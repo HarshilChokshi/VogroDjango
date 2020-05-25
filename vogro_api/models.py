@@ -89,7 +89,7 @@ class Task(models.Model):
     estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.task_type + ' (' + self.client_name + ')'
+        return self.task_type.task_type + ' (' + self.client_name + ')'
 
     @staticmethod
     def convertToJsonDict(task):
@@ -99,11 +99,11 @@ class Task(models.Model):
             "description": task.description,
             "task_type": task.task_type.task_type,
             "client_name": task.client_name,
-            "client_email": task.client,
+            "client_email": task.client_email,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
-            "city": task.city.city,
+            "city": task.city.city_name,
             "estimated_time": task.estimated_time,
         }
 
@@ -121,7 +121,7 @@ class UnMatchedTask(models.Model):
     estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.task_type + ' (' + self.client_name + ')'
+        return self.task_type.task_type + ' (' + self.client_name + ')'
 
     @staticmethod
     def convertToJsonDict(task):
@@ -131,11 +131,11 @@ class UnMatchedTask(models.Model):
             "description": task.description,
             "task_type": task.task_type.task_type,
             "client_name": task.client_name,
-            "client_email": task.client,
+            "client_email": task.client_email,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
-            "city": task.city.city,
+            "city": task.city.city_name,
             "estimated_time": task.estimated_time,
         }
 
@@ -154,7 +154,7 @@ class MatchedTask(models.Model):
     estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.task_type + ' (' + self.client_name + ')'
+        return self.task_type.task_type + ' (' + self.client_name + ')'
 
     @staticmethod
     def convertToJsonDict(task):
@@ -165,11 +165,11 @@ class MatchedTask(models.Model):
             "description": task.description,
             "task_type": task.task_type.task_type,
             "client_name": task.client_name,
-            "client_email": task.client,
+            "client_email": task.client_email,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
-            "city": task.city.city,
+            "city": task.city.city_name,
             "estimated_time": task.estimated_time,
         }
 
@@ -187,7 +187,7 @@ class CompletedTask(models.Model):
     estimated_time = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.task_type + ' (' + self.client_name + ')'
+        return self.task_type.task_type + ' (' + self.client_name + ')'
 
     @staticmethod
     def convertToJsonDict(task):
@@ -198,10 +198,10 @@ class CompletedTask(models.Model):
             "description": task.description,
             "task_type": task.task_type.task_type,
             "client_name": task.client_name,
-            "client_email": task.client,
+            "client_email": task.client_email,
             "client_number": task.client_number,
         	"earliest_preferred_time": task.earliest_preferred_time.strftime(dateFormatString),
         	"latest_preferred_time": task.latest_preferred_time.strftime(dateFormatString),
-            "city": task.city.city,
+            "city": task.city.city_name,
             "estimated_time": task.estimated_time,
         }

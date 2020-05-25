@@ -83,8 +83,6 @@ def addVolunteerUser(request):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
         return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
 
     # get the request body and convert it to python dict object
     body_dict = json.loads(request.body)
@@ -117,10 +115,6 @@ def addVolunteerUser(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def volunteerUser(request, user_id):
-    # Make sure content type is application/json
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
-
     # grab the volunteer user from db
     volunteerUser = None
     try:
@@ -158,8 +152,6 @@ def addClientUser(request):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
         return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
 
     # get the request body and convert it to python dict object
     body_dict = json.loads(request.body)
@@ -187,10 +179,6 @@ def addClientUser(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def clientUser(request, user_id):
-    # Make sure content type is application/json
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
-
     # grab the client user from db
     clientUser = None
     try:
@@ -227,8 +215,6 @@ def createTask(request):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
         return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
 
     # get the request body and convert it to python dict object
     body_dict = json.loads(request.body)
@@ -261,10 +247,6 @@ def createTask(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def task(request, task_id):
-    # Make sure the content type is application/json
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
-
     # Grab the taks object from database
     task = None
     try:
@@ -291,7 +273,7 @@ def task(request, task_id):
             volunteer_id_id = volunteer_id,
             task_location = task.task_location,
             description = task.description,
-            task_type = task.task_type.task_type,
+            task_type = task.task_type,
             client_name = task.client_name,
             client_email = task.client_email,
             client_number = task.client_number,
@@ -317,8 +299,6 @@ def getNearByTasks(request):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
         return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
 
     # get the request body and convert it to python dict object
     body_dict = json.loads(request.body)
@@ -374,10 +354,6 @@ def getNearByTasks(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def matchedTask(request, task_id):
-    # Make sure the content type is application/json
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
-
     # Grab the tasks object from database
     task = None
     try:
@@ -419,8 +395,6 @@ def moveMatchedTaskBackToTask(request, task_id):
     # Make sure method is POST and the content type is application/json
     if request.method != 'POST':
         return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
 
     # Grab the tasks object from database
     matchedTask = None
@@ -457,8 +431,6 @@ def getAllMatchedTasksBelongingToVolunteerUser(request, user_id):
     # Make sure request is GET method and content type is application/json
     if request.method != 'GET':
         return HttpResponse('Only the GET verb can be used on this endpoint.', status=405)
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
 
     matchedTaskList = MatchedTask.objects.filter(volunteer_id_id=user_id)
 
@@ -476,9 +448,6 @@ def repostTask(request, task_id):
     # Make sure request is POST method and content type is application/json
     if request.method != 'POST':
         return HttpResponse('Only the POST verb can be used on this endpoint.', status=405)
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
-
 
     # Grab the unmatched task from database
     unMatchedTask = None
@@ -518,8 +487,6 @@ def getAllCompletedTasksBelongingToVolunteerUser(request, user_id):
     # Make sure request is GET method and content type is application/json
     if request.method != 'GET':
         return HttpResponse('Only the GET verb can be used on this endpoint.', status=405)
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
 
     completedTaskList = CompletedTask.objects.filter(volunteer_id_id=user_id).order_by('-latest_preferred_time')
 
@@ -536,8 +503,6 @@ def getAllCities(request):
     # Make sure request is GET method and content type is application/json
     if request.method != 'GET':
         return HttpResponse('Only the GET verb can be used on this endpoint.', status=405)
-    if request.content_type != 'application/json':
-        return HttpResponse('The content-type must be application/json.', status=415)
 
     # Grab all the cities
     cities = City.objects.all()
