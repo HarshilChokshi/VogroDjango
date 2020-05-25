@@ -13,9 +13,12 @@ def moveAllExpiredTasksToUnMatchedTaskTable():
             description = expiredTask.description,
             task_type = expiredTask.task_type,
             client_name = expiredTask.client_name,
+            client_email = expiredTask.client_email,
             client_number = expiredTask.client_number,
             earliest_preferred_time = expiredTask.earliest_preferred_time,
             latest_preferred_time = expiredTask.latest_preferred_time,
+            city = expiredTask.city,
+            estimated_time = expiredTask.estimated_time
         )
         unMatchedTask.save()
         expiredTask.delete()
