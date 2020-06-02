@@ -111,9 +111,7 @@ def addVolunteerUser(request):
 
 
 
-@api_view(['GET', 'PATCH'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@csrf_exempt
 def volunteerUser(request, user_id):
     # grab the volunteer user from db
     volunteerUser = None
