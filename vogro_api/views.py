@@ -41,8 +41,8 @@ def auth_test(request, format=None):
     }
     return Response(content)
 
-
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes((AllowAny,))
 def refresh_token(request):
     # Transforming data for User table
     data = request.data
