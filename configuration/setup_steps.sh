@@ -19,7 +19,7 @@ sudo apt-get install nginx
 # Setup database and db user
 sudo mysql -u root
 CREATE DATABASE vogro_api;
-create user 'django'@'localhost' identified by ‘Vogro2020’;
+create user 'django'@'localhost' identified by 'Vogro2020';
 grant usage on *.* to 'django'@'localhost';
 grant all privileges on vogro_api.* to 'django'@'localhost';
 FLUSH PRIVILEGES;
